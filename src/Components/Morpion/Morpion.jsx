@@ -1,9 +1,7 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import "./Morpion.css";
 import circle_icon from "../Assets/circle.png";
 import cross_icon from "../Assets/cross.png";
-import { useState } from "react";
-import userEvent from "@testing-library/user-event";
 
 let data = ["", "", "", "", "", "", "", "", ""];
 
@@ -12,22 +10,24 @@ const Morpion = () => {
   let [lock, setLock] = useState(false);
   let titleRef = useRef(null);
 
-let box1 = useRef(null);
-let box2 = useRef(null);
-let box3 = useRef(null);
-let box4 = useRef(null);
-let box5 = useRef(null);
-let box6 = useRef(null);
-let box7 = useRef(null);
-let box8 = useRef(null);
-let box9 = useRef(null);
+  let box1 = useRef(null);
+  let box2 = useRef(null);
+  let box3 = useRef(null);
+  let box4 = useRef(null);
+  let box5 = useRef(null);
+  let box6 = useRef(null);
+  let box7 = useRef(null);
+  let box8 = useRef(null);
+  let box9 = useRef(null);
 
-let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9]
-
+  let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
 
   const toggle = (e, num) => {
     if (lock) {
       return 0;
+    }
+    if (data[num] !== "") {
+      return;
     }
     if (count % 2 === 0) {
       e.target.innerHTML = `<img src='${cross_icon}'>`;
@@ -42,24 +42,19 @@ let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9]
   };
 
   const ifWin = () => {
-    if (data[0] === data[1] && data[1] === data[2] && data[2] !== "") {
-      win(data[2]);
-    } else if (data[3] === data[4] && data[4] === data[5] && data[5] !== "") {
-      win(data[5]);
-    } else if (data[6] === data[7] && data[7] === data[8] && data[8] !== "") {
-      win(data[8]);
-    } else if (data[0] === data[3] && data[3] === data[6] && data[6] !== "") {
-      win(data[6]);
-    } else if (data[1] === data[4] && data[4] === data[7] && data[7] !== "") {
-      win(data[7]);
-    } else if (data[2] === data[5] && data[5] === data[8] && data[8] !== "") {
-      win(data[8]);
-    } else if (data[0] === data[4] && data[4] === data[8] && data[8] !== "") {
-      win(data[8]);
-    } else if (data[0] === data[1] && data[1] === data[2] && data[2] !== "") {
-      win(data[2]);
-    } else if (data[2] === data[4] && data[4] === data[6] && data[6] !== "") {
-      win(data[6]);
+    if (
+      (data[0] === data[1] && data[1] === data[2] && data[2] !== "") ||
+      (data[3] === data[4] && data[4] === data[5] && data[5] !== "") ||
+      (data[6] === data[7] && data[7] === data[8] && data[8] !== "") ||
+      (data[0] === data[3] && data[3] === data[6] && data[6] !== "") ||
+      (data[1] === data[4] && data[4] === data[7] && data[7] !== "") ||
+      (data[2] === data[5] && data[5] === data[8] && data[8] !== "") ||
+      (data[0] === data[4] && data[4] === data[8] && data[8] !== "") ||
+      (data[2] === data[4] && data[4] === data[6] && data[6] !== "")
+    ) {
+      win(data[count % 2 === 0 ? 1 : 0]);
+    } else if (count === 9) {
+      draw();
     }
   };
 
@@ -72,17 +67,20 @@ let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9]
     }
   };
 
+  const draw = () => {
+    setLock(true);
+    titleRef.current.innerHTML = "Vous êtes nul ! Donc match nul :/";
+  };
 
   const reset = () => {
     setLock(false);
     data = ["", "", "", "", "", "", "", "", ""];
-    titleRef.current.innerHTML = 'Morpion en <span>ReactJs<span>'
-    boxArray.map((e)=>{
-        e.current.innerHTML = "" ;
-    })
-
-  }
-
+    setCount(0);
+    titleRef.current.innerHTML = 'Morpion en <span>ReactJs<span>';
+    boxArray.forEach((e) => {
+      e.current.innerHTML = "";
+    });
+  };
 
   return (
     <div>
@@ -163,7 +161,9 @@ let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9]
             ></div>
           </div>
         </div>
-        <button className="reset" onClick={()=>{reset()}}>RESET</button>
+        <button className="reset" onClick={reset}>
+          RESET
+        </button>
       </div>
     </div>
   );
