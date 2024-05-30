@@ -23,37 +23,41 @@ const Morpion = () => {
   let boxArray = [box1, box2, box3, box4, box5, box6, box7, box8, box9];
 
   const toggle = (e, num) => {
-    if (lock) {
-      return 0;
-    }
-    if (data[num] !== "") {
+    if (lock || data[num] !== "") {
       return;
     }
     if (count % 2 === 0) {
       e.target.innerHTML = `<img src='${cross_icon}'>`;
       data[num] = "x";
-      setCount(++count);
     } else {
       e.target.innerHTML = `<img src='${circle_icon}'>`;
       data[num] = "o";
-      setCount(++count);
     }
+    setCount(count + 1);
     ifWin();
   };
 
   const ifWin = () => {
-    if (
-      (data[0] === data[1] && data[1] === data[2] && data[2] !== "") ||
-      (data[3] === data[4] && data[4] === data[5] && data[5] !== "") ||
-      (data[6] === data[7] && data[7] === data[8] && data[8] !== "") ||
-      (data[0] === data[3] && data[3] === data[6] && data[6] !== "") ||
-      (data[1] === data[4] && data[4] === data[7] && data[7] !== "") ||
-      (data[2] === data[5] && data[5] === data[8] && data[8] !== "") ||
-      (data[0] === data[4] && data[4] === data[8] && data[8] !== "") ||
-      (data[2] === data[4] && data[4] === data[6] && data[6] !== "")
-    ) {
-      win(data[count % 2 === 0 ? 1 : 0]);
-    } else if (count === 9) {
+    const winningCombinations = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    for (let combination of winningCombinations) {
+      const [a, b, c] = combination;
+      if (data[a] && data[a] === data[b] && data[a] === data[c]) {
+        win(data[a]);
+        return;
+      }
+    }
+
+    if (data.every((box) => box !== "")) {
       draw();
     }
   };
@@ -69,7 +73,7 @@ const Morpion = () => {
 
   const draw = () => {
     setLock(true);
-    titleRef.current.innerHTML = "Vous êtes nul ! Donc match nul :/";
+    titleRef.current.innerHTML = "Match nul bouuuh";
   };
 
   const reset = () => {
